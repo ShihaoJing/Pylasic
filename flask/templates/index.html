@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Pylastic</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="{{ url_for('static', filename = 'vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+  <!-- MetisMenu CSS -->
+
+  <link href="{{ url_for('static', filename = 'vendor/metisMenu/metisMenu.min.css') }}" rel="stylesheet">
+
+  <!-- Morris Charts CSS -->
+  <link href="{{ url_for('static', filename = 'vendor/morrisjs/morris.css') }}" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="{{ url_for('static', filename = 'vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+
+  <script src="https://unpkg.com/vue"></script>
+
+  <style> 
+    input[type=text] {
+        width: 500px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        background-color: white;
+        background-position: 10px 10px; 
+        background-repeat: no-repeat;
+        padding: 12px 20px 12px 40px;
+        -webkit-transition: width 0.4s ease-in-out;
+        transition: width 0.4s ease-in-out;
+    }
+
+    body {
+      padding-top: 50px;
+    }
+
+    .search-area {
+      padding: 40px 15px;
+      text-align: center;
+    }
+
+    .result-area {
+      text-align: center;
+    }
+
+  </style>
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+    <div class="search-area">
+      <h1>Pylastic Search</h1>
+      <input id="search" type="text" name="search" placeholder="Search..">
+    </div>
+    <div id="result" class="result-area">
+      <todo-item v-for="item in groceryList" v-bind:todo="item"></todo-item>
+    </div>
+</div><!-- /.container -->
+
+</body>
+
+<script type="text/javascript">
+  Vue.component('todo-item', {
+    // The todo-item component now accepts a
+    // "prop", which is like a custom attribute.
+    // This prop is called todo.
+    props: ['todo'],
+    template: '<p>{{ todo.text }}</p>'
+  })
+
+  var app = new Vue({
+    el: '#result',
+    data: {
+      groceryList: [
+        { text: 'result1' },
+        { text: 'result2' },
+        { text: 'result3' },
+        { text: 'result4' }
+      ]
+    }
+  })
+</script>
+
+
+</html>
