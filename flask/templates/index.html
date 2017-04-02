@@ -11,20 +11,9 @@
 
   <title>Pylastic</title>
 
-  <!-- Bootstrap Core CSS -->
-  <link href="{{ url_for('static', filename = 'vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-
-  <!-- MetisMenu CSS -->
-
-  <link href="{{ url_for('static', filename = 'vendor/metisMenu/metisMenu.min.css') }}" rel="stylesheet">
-
-  <!-- Morris Charts CSS -->
-  <link href="{{ url_for('static', filename = 'vendor/morrisjs/morris.css') }}" rel="stylesheet">
-
-  <!-- Custom Fonts -->
-  <link href="{{ url_for('static', filename = 'vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
-
-  <script src="https://unpkg.com/vue"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" 
+                         integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
+                        crossorigin="anonymous">
 
   <style> 
     input[type=text] {
@@ -41,60 +30,79 @@
         transition: width 0.4s ease-in-out;
     }
 
-    body {
-      padding-top: 50px;
-    }
-
     .search-area {
-      padding: 40px 15px;
-      text-align: center;
+      padding: 20px;
+      outline: 1px solid orange;
     }
 
     .result-area {
-      text-align: center;
+      padding: 20px;
+    }
+
+    ul{
+        list-style: none;
+        width: 842px;
+        padding-left: 150px;
+        text-align: left;
+    }
+
+    ul li{
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    ul li p{
+        margin-left: 75px;
+        font-weight: bold;
+        padding-top: 12px;
+        color:#6e7a7f;
     }
 
   </style>
-
 </head>
 
 
 
 <body>
-<div class="container">
+  <div class="container-fluid" id="app">
+    <div class="row search-area">
+      <div class="col-2">
+        <h3 style="padding-top: 12px">Pylastic Search</h1>
+      </div>
+      <div class="col-6">
+        <input type="text" placeholder="Search.." v-model="queryString" v-on:keyup.enter="submit">
+      </div>
+    </div>
+    <div class="result-area">
+      <ul>
+        <!-- Render a li element for every entry in the computed filteredArticles array. -->          
+        <li v-for="result in resultList">
+            <p>{{result.title}}</p>
+            <p>{{result.text}}</p>
+        </li>
+      </ul>
+    </div>      
+  </div><!-- /.container -->
 
-    <div class="search-area">
-      <h1>Pylastic Search</h1>
-      <input id="search" type="text" name="search" placeholder="Search..">
-    </div>
-    <div id="result" class="result-area">
-      <todo-item v-for="item in groceryList" v-bind:todo="item"></todo-item>
-    </div>
-</div><!-- /.container -->
+  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" 
+          integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" 
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" 
+          integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" 
+          crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" 
+          integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" 
+          crossorigin="anonymous"></script>
+
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://cdn.jsdelivr.net/vue.resource/1.2.1/vue-resource.min.js"></script>
+
+  <script src="$ url_for('static', filename = 'pylastic.js') $"></script>
 
 </body>
 
-<script type="text/javascript">
-  Vue.component('todo-item', {
-    // The todo-item component now accepts a
-    // "prop", which is like a custom attribute.
-    // This prop is called todo.
-    props: ['todo'],
-    template: '<p>{{ todo.text }}</p>'
-  })
 
-  var app = new Vue({
-    el: '#result',
-    data: {
-      groceryList: [
-        { text: 'result1' },
-        { text: 'result2' },
-        { text: 'result3' },
-        { text: 'result4' }
-      ]
-    }
-  })
-</script>
 
 
 </html>
