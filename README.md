@@ -35,3 +35,6 @@ dataset3 = {
     'text': "I'm the third data set"
 }
 ```
+==================================================================================
+
+conda install -c conda-forge elasticsearch=5.3.0
