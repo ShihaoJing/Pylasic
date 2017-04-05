@@ -38,3 +38,5 @@ dataset3 = {
 ==================================================================================
 
 conda install -c conda-forge elasticsearch=5.3.0
+or 
+pip install elasticsearch
