@@ -6,8 +6,10 @@
     pip install flask
     ```
 3. Elastic Runtime
+```
 Download: https://www.elastic.co/downloads/elasticsearch
 Document: https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html
+```
 
 #### Setup server
 Default port 5000
