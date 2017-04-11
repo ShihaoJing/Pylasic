@@ -32,7 +32,7 @@
 
     .search-area {
       padding: 20px;
-      outline: 1px solid orange;
+      outline: 3px solid orange;
     }
 
     .result-area {
@@ -41,22 +41,36 @@
 
     ul{
         list-style: none;
-        width: 842px;
-        padding-left: 150px;
         text-align: left;
+        padding-left: 0px;
     }
 
     ul li{
-        border-bottom: 1px solid #ddd;
+        border-bottom: 3px solid #ddd;
         padding: 10px;
         overflow: hidden;
     }
 
-    ul li p{
-        margin-left: 75px;
+    ul li p.keyword{
+        font-weight: bold;
+        color:#6e7a7f;
+    }
+
+    ul li p.title{
+        font-weight: bold;
+        font-size: 20px;
+        color:#31b0d5;
+    }
+
+    ul li p.description{
+        font-style: italic;
+        font-size: 15px;
+        color:#6e7a7f;
+    }
+
+    ul li a{
         font-weight: bold;
         padding-top: 12px;
-        color:#6e7a7f;
     }
 
   </style>
@@ -74,14 +88,23 @@
         <input type="text" placeholder="Search.." v-model="queryString" v-on:keyup.enter="submit">
       </div>
     </div>
-    <div class="result-area">
+    <div class="row result-area">
+      <div class="col-2"></div>
+      <div class="col-6">
       <ul>
         <!-- Render a li element for every entry in the computed filteredArticles array. -->          
-        <li v-for="result in resultList">
-            <p>{{result.title}}</p>
-            <p>{{result.text}}</p>
+        <li v-for="result in resultList" v-if="hasResult">
+          <p class="title">{{result.title}}</p>
+          <p class="description">{{result.description}}</p>
+          <p class="keyword">Keyword: {{result.keyword}}</p>
+          <a v-bind:href="result.downloadURL">Download</a>
+        </li>
+
+        <li v-if="!hasResult">
+          <p class="title">No Results</p>
         </li>
       </ul>
+      </div>
     </div>      
   </div><!-- /.container -->
 

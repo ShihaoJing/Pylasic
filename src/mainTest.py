@@ -41,7 +41,7 @@ pip-install pyelasticsearch
 '''
 
 es_client = pyelasticsearch.ElasticSearch('http://localhost:9200/')
-myDocuments = csv2es.documents_from_file(es_client, "./test.csv", ",", quiet = False)
+myDocuments = csv2es.documents_from_file(es_client, '../data/College Scorecard/Most-Recent-Cohorts-NSLDS-Elements.csv', ",", quiet = False)
 csv2es.perform_bulk_index(host = 'http://localhost:9200/'
                           , index_name = "baseindex",
                            doc_type = "basedoctype",

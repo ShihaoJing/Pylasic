@@ -17,14 +17,26 @@ new Vue({
   el: '#app',
   data: {
     queryString: '',
+    hasResult: false,
     resultList: []
   },
   methods: {
     submit: function () {
-      this.$http.get('/q').then(response => {
+      var query = {
+        queryString: this.queryString
+      }
+      this.$http.get('/q', {params: query}).then(response => {
         console.log(response.body)
-        //this.resultList = response.body
-        this.resultList = fakeRes;
+        if (response.body.length == 0) {
+          this.hasResult = false;
+          this.resultList = []
+        }
+        else 
+        {
+          this.hasResult = true;
+          this.resultList = response.body
+        }
+        //this.resultList = fakeRes;
       }, response => {
         // error callback
       });
