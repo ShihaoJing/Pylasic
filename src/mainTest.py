@@ -68,8 +68,8 @@ change the file name to your csv file
 
 s = Search()
 q = Q('bool',must=[Q('match', CITY='San Francisco')],
-       should=[ Q('match', ZIP='94103')], minimum_should_match=1, 
-       filter=[ Q('terms', ZIP='94103')])
+       should=[ Q('match', ZIP='94108-5834')], minimum_should_match=1, 
+       filter=[ Q('terms', ZIP='94108')])
 
 s.query(q)
 print(s.to_dict())
