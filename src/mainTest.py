@@ -1,12 +1,11 @@
 
 import httplib
-
 import csv2es
 import pyelasticsearch
 import elasticsearch
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl.connections import connections
-from elasticsearch_dsl import Search
+from elasticsearch_dsl import Search, Q
 
 
 connections.create_connection(hosts=['localhost:9200'], timeout=20)
@@ -49,15 +48,15 @@ pip-install pyelasticsearch
 change the file name to your csv file
 '''
 
-es_client = pyelasticsearch.ElasticSearch('http://localhost:9200/')
-myDocuments = csv2es.documents_from_file(es_client, "./test_small.csv", ",", quiet = False)
-csv2es.perform_bulk_index(host = 'http://localhost:9200/'
-                          , index_name = "baseindex",
-                           doc_type = "basedoctype",
-                           doc_fetch = myDocuments,
-                           docs_per_chunk = 5000,
-                           bytes_per_chunk = 100000,
-                           parallel = 1)
+# es_client = pyelasticsearch.ElasticSearch('http://localhost:9200/')
+# myDocuments = csv2es.documents_from_file(es_client, "./test_small.csv", ",", quiet = False)
+# csv2es.perform_bulk_index(host = 'http://localhost:9200/'
+#                           , index_name = "baseindex",
+#                            doc_type = "basedoctype",
+#                            doc_fetch = myDocuments,
+#                            docs_per_chunk = 5000,
+#                            bytes_per_chunk = 100000,
+#                            parallel = 1)
 
 #===============================================================================
 # 
@@ -65,12 +64,19 @@ csv2es.perform_bulk_index(host = 'http://localhost:9200/'
 
 #query and filter search testing
 #-------------------------------------------------------------------------------------
-#s = Search().query("match_all")
-#------------------------------------------------------------------------------ 
-s = Search().query("match", CITY = "San Francisco")
+#------------------------------------------------------------------------------
+
+s = Search()
+q = Q('bool',must=[Q('match', CITY='San Francisco')],
+       should=[ Q('match', ZIP='94103')], minimum_should_match=1, 
+       filter=[ Q('terms', ZIP='94103')])
+
+s.query(q)
+print(s.to_dict())
+
 response = s.execute()
-for hit in s:
-    print(hit.CITY , " ", hit.ZIP)
+for hit in s[1:10]:
+    print(hit.INSTNM)
 
 
 print("END of elastic search test script")
