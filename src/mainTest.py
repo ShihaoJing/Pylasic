@@ -1,21 +1,22 @@
 
 import httplib
-
 import csv2es
 import pyelasticsearch
 import elasticsearch
+from elasticsearch import Elasticsearch
 from elasticsearch_dsl.connections import connections
+from elasticsearch_dsl import Search, Q
 
 
 connections.create_connection(hosts=['localhost:9200'], timeout=20)
 
 
 
-conn = httplib.HTTPConnection("localhost:9200")
-conn.request("GET","/")
-res = conn.getresponse()
-print res.status, res.reason
-print res.read()
+# conn = httplib.HTTPConnection("localhost:9200")
+# conn.request("GET","/")
+# res = conn.getresponse()
+# print res.status, res.reason
+# print res.read()
 
 '''
 NEXT:
@@ -35,20 +36,47 @@ dataFolder = "../data/"
 #csv2es --index-name potatoes --doc-type potato --import-file potatoes.cs
 
 
+
+# def funFunction(**kwargs):
+#     for a in kwargs:
+#         print (a,kwargs[a])
+# funFunction(a="A", b="B")        
+
 '''
 pip-install csv2es
 pip-install pyelasticsearch
+change the file name to your csv file
 '''
 
-es_client = pyelasticsearch.ElasticSearch('http://localhost:9200/')
-myDocuments = csv2es.documents_from_file(es_client, '../data/College Scorecard/Most-Recent-Cohorts-NSLDS-Elements.csv', ",", quiet = False)
-csv2es.perform_bulk_index(host = 'http://localhost:9200/'
-                          , index_name = "baseindex",
-                           doc_type = "basedoctype",
-                           doc_fetch = myDocuments,
-                           docs_per_chunk = 5000,
-                           bytes_per_chunk = 100000,
-                           parallel = 1)
+# es_client = pyelasticsearch.ElasticSearch('http://localhost:9200/')
+# myDocuments = csv2es.documents_from_file(es_client, "./test_small.csv", ",", quiet = False)
+# csv2es.perform_bulk_index(host = 'http://localhost:9200/'
+#                           , index_name = "baseindex",
+#                            doc_type = "basedoctype",
+#                            doc_fetch = myDocuments,
+#                            docs_per_chunk = 5000,
+#                            bytes_per_chunk = 100000,
+#                            parallel = 1)
+
+#===============================================================================
+# 
+#===============================================================================
+
+#query and filter search testing
+#-------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+s = Search()
+q = Q('bool',must=[Q('match', CITY='San Francisco')],
+       should=[ Q('match', ZIP='94103')], minimum_should_match=1, 
+       filter=[ Q('terms', ZIP='94103')])
+
+s.query(q)
+print(s.to_dict())
+
+response = s.execute()
+for hit in s[1:10]:
+    print(hit.INSTNM)
 
 
 print("END of elastic search test script")
