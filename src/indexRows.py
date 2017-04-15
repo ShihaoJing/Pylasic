@@ -3,21 +3,6 @@ from elasticsearch import Elasticsearch
 
 es = Elasticsearch(timeout=300)
 
-def slice_list(input, size=30):
-    input_size = len(input)
-    slice_size = input_size / size
-    remain = input_size % size
-    result = []
-    iterator = iter(input)
-    for i in range(size):
-        result.append([])
-        for j in range(slice_size):
-            result[i].append(iterator.next())
-        if remain:
-            result[i].append(iterator.next())
-            remain -= 1
-    return result
-
 #dataFolder = '../data/College Scorecard/'
 dataFolder = '../data'
 
@@ -53,7 +38,7 @@ for dirname in os.listdir(dataFolder):
         dataset_count = dataset_count + 1
         for filename in os.listdir(os.path.join(dataFolder, dirname)):
             if filename.endswith('.csv'):
-                filepath =  os.path.join(dataFolder, dirname, filename)
+                filepath =  os.path.join(dataFolder, filename)
                 print('indexing: ' + filepath)
                 # read csv file
                 dataset = csv.DictReader(open(filepath, 'r'))
@@ -61,19 +46,17 @@ for dirname in os.listdir(dataFolder):
                 dataList = list(dataset)
                 # list of all attributes (column names)
                 attrList = list(dataList[0].keys())
-                # cut into slices, default is 30 slices per file
-                dataslices = slice_list(dataList)
-                for index, datagroup in enumerate(dataslices):
-                    data = {'data': datagroup}
-                    data['datasetName'] = metaJSON['title']
-                    data['datasetDescription'] = metaJSON['description']
-                    data['datasetDistribution'] = metaJSON['distribution']
-                    data['keyword'] = metaJSON['keyword']
-                    data['filename'] = filename
-                    data['attrList'] = attrList
-                    # index name can be the name of dataset
-                    # doc_type name doesn't matter.
-                    print('indexing slices %s' % str(index))
-                    print(doIndex(indexname, data))
-
-
+                data = {}
+                data['datasetName'] = metaJSON['title']
+                data['datasetDescription'] = metaJSON['description']
+                data['datasetDistribution'] = metaJSON['distribution']
+                data['keyword'] = metaJSON['keyword']
+                data['filename'] = filename
+                data['attrList'] = attrList
+                for index, row in enumerate(dataList):
+                    rowvalues = []
+                    for key in row:
+                        rowvalues.append(row[key])
+                    data['data' + str(index)] =  rowvalues
+                print(doIndex(indexname, data))
+            
