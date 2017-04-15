@@ -2,4 +2,7 @@
 .project
 .pydevproject
 data/*
+indexed_data/*
 flask/start_debug2_windows.bat
+src/elasticsearch_dsl/*
+flask/app.pyc

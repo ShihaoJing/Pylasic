@@ -10,7 +10,7 @@ from datetime import datetime
 from elasticsearch import Elasticsearch
 
 
-es = Elasticsearch()
+es = Elasticsearch(timeout=300)
 
 class CustomFlask(Flask):
 	jinja_options = Flask.jinja_options.copy()
@@ -31,11 +31,13 @@ def index():
 
 @app.route('/q')
 def query():
-	res = es.search(index="all", body={"query": {"match_all": {}}})
+	queryString = request.args.get('queryString')
+	res = es.search(index="baseindex", body={"_source": ["description", "title", "downloadURL", "keyword"], 
+		"query": {"match": {"description": queryString}}})
 	source = []
 	for hit in res['hits']['hits']:
 		source.append(hit["_source"])
-	print(source)
+	print len(source)
 	return jsonify(source)
 
 
