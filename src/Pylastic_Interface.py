@@ -33,7 +33,7 @@ def execute_pylastic_boolean_search(input_string):
     '''
     '''
     s = Search()
-    q = Q('bool',must=[Q('match', CITY='San Francisco')])    
+    q = Q('bool',must=[Q('match', _all=input_string)])    
     s = s.query(q)
     print("running boolean query \n", s.to_dict())    
     response = s.execute()
