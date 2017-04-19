@@ -14,7 +14,8 @@ results = searcher.execute_pylastic_search("San Francisco", type = 'bool')
 
 if len(results) > 3:
     for r in results[:3]:
-        print r
+        print r['datasetName']
+        print r['score']
 
 #------------------------OLD CODE----------------------------------- 
 # 
