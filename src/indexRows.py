@@ -22,8 +22,8 @@ def createIndex(indexname):
     }
     es.indices.create(index=indexname, body=index_settings)
 
-def doIndex(indexname, data): 
-    res = es.index(index=indexname, doc_type='basetype', body=data)
+def doIndex(indexname, input_data): 
+    res = es.index(index=indexname, doc_type='basetype', body=input_data)
     return res['created']
 
 dataset_count = 0
@@ -46,17 +46,17 @@ for dirname in os.listdir(dataFolder):
                 dataList = list(dataset)
                 # list of all attributes (column names)
                 attrList = list(dataList[0].keys())
-                data = {}
-                data['datasetName'] = metaJSON['title']
-                data['datasetDescription'] = metaJSON['description']
-                data['datasetDistribution'] = metaJSON['distribution']
-                data['keyword'] = metaJSON['keyword']
-                data['filename'] = filename
-                data['attrList'] = attrList
+                input_data = {}
+                input_data['datasetName'] = metaJSON['title']
+                input_data['datasetDescription'] = metaJSON['description']
+                input_data['datasetDistribution'] = metaJSON['distribution']
+                input_data['keyword'] = metaJSON['keyword']
+                input_data['filename'] = filename
+                input_data['attrList'] = attrList
                 for index, row in enumerate(dataList):
                     rowvalues = []
                     for key in row:
                         rowvalues.append(row[key])
-                    data['data' + str(index)] =  rowvalues
-                print(doIndex(indexname, data))
+                    input_data['data' + str(index)] =  rowvalues
+                print(doIndex(indexname, input_data))
             

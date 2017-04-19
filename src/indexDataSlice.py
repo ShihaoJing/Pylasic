@@ -37,8 +37,8 @@ def createIndex(indexname):
     }
     es.indices.create(index=indexname, body=index_settings)
 
-def doIndex(indexname, data): 
-    res = es.index(index=indexname, doc_type='basetype', body=data)
+def doIndex(indexname, input_data): 
+    res = es.index(index=indexname, doc_type='basetype', body=input_data)
     return res['created']
 
 dataset_count = 0
@@ -64,16 +64,16 @@ for dirname in os.listdir(dataFolder):
                 # cut into slices, default is 30 slices per file
                 dataslices = slice_list(dataList)
                 for index, datagroup in enumerate(dataslices):
-                    data = {'data': datagroup}
-                    data['datasetName'] = metaJSON['title']
-                    data['datasetDescription'] = metaJSON['description']
-                    data['datasetDistribution'] = metaJSON['distribution']
-                    data['keyword'] = metaJSON['keyword']
-                    data['filename'] = filename
-                    data['attrList'] = attrList
+                    input_data = {'data': datagroup}
+                    input_data['datasetName'] = metaJSON['title']
+                    input_data['datasetDescription'] = metaJSON['description']
+                    input_data['datasetDistribution'] = metaJSON['distribution']
+                    input_data['keyword'] = metaJSON['keyword']
+                    input_data['filename'] = filename
+                    input_data['attrList'] = attrList
                     # index name can be the name of dataset
                     # doc_type name doesn't matter.
                     print('indexing slices %s' % str(index))
-                    print(doIndex(indexname, data))
+                    print(doIndex(indexname, input_data))
 
 
