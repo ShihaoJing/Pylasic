@@ -94,8 +94,8 @@
       <ul>
         <!-- Render a li element for every entry in the computed filteredArticles array. -->          
         <li v-for="result in resultList" v-if="hasResult">
-          <p class="title">{{result.title}}</p>
-          <p class="description">{{result.description}}</p>
+          <p class="title">{{result.datasetName}}</p>
+          <p class="description">{{result.datasetDescription}}</p>
           <p class="keyword">Keyword: {{result.keyword}}</p>
           <a v-bind:href="result.downloadURL">Download</a>
         </li>

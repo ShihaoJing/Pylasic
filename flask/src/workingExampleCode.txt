@@ -1,0 +1,20 @@
+
+
+s = Search().query("match_all") 
+s = Search().query("match", CITY = "San Francisco")
+response = s.execute()
+for hit in s:
+    print(hit.CITY , " ", hit.ZIP)
+q = Q('bool',must=[Q('match', CITY='San Francisco')], 
+       should=[Q('match', ZIP='94105'), Q('match', ZIP='94103')], minimum_should_match=1)
+s = Search().query(q)
+q = Q('bool',must=[Q('match', CITY='San Francisco')], 
+      )
+q = Q('bool',must=[Q('match', CITY='San Francisco')],
+       should=[ Q('match', ZIP='94103')], minimum_should_match=1, 
+       filter=[ Q('terms', ZIP='94103')])
+s = Search(using=client, index="my-index") \
+    .filter("term", category="search") \
+    .query("match", title="python")   \
+    .query(~Q("match", description="beta"))
+s = Search().filter("term",ZIP = "94103").query("match",CITY='San Francisco')

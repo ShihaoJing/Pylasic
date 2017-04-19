@@ -8,6 +8,7 @@ from flask import session, escape
 from flask import jsonify
 from datetime import datetime
 from elasticsearch import Elasticsearch
+from src import Pylastic_Interface as searcher
 
 
 es = Elasticsearch(timeout=300)
@@ -32,13 +33,16 @@ def index():
 @app.route('/q')
 def query():
 	queryString = request.args.get('queryString')
-	res = es.search(index="baseindex", body={"_source": ["description", "title", "downloadURL", "keyword"], 
-		"query": {"match": {"description": queryString}}})
-	source = []
-	for hit in res['hits']['hits']:
-		source.append(hit["_source"])
-	print len(source)
-	return jsonify(source)
+	raw_results = searcher.execute_pylastic_search("San Francisco", type = 'bool')
+	results = []
+	for single_result in raw_results:
+		dict_form = {}
+		dict_form['datasetName'] = single_result['datasetName']
+		dict_form['datasetDescription'] = single_result['datasetDescription']
+		dict_form['score'] = single_result['score']
+		results.append(dict_form)
+	print len(results)
+	return jsonify(results)
 
 
 
