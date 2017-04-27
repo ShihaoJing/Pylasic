@@ -10,7 +10,7 @@
 import Pylastic_Interface as searcher
 
 
-results = searcher.execute_pylastic_search("San Francisco", type = 'bool')
+results = searcher.execute_pylastic_search("Education", type = 'bool')
 
 if len(results) > 3:
     for r in results[:3]:

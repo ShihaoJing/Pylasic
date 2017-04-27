@@ -31,10 +31,14 @@ def execute_pylastic_search(input_string, **kwargs):
             each doc info contains the "name", "URL", "snippet","score". snippet contains the matching parts of the doc.
     '''
     results = []
-    if 'type' in kwargs:
-        if kwargs['type'] == 'bool':
-            results = execute_pylastic_boolean_search(input_string)
-    results = filter_results(results)
+    parts = input_string.split(",")
+    for single_part in parts:        
+        if 'type' in kwargs:
+            if kwargs['type'] == 'bool':
+                a = execute_pylastic_boolean_search(single_part)
+                results = results + a.hits.hits
+    if len(results) >0 :
+        results = filter_results(results)
     return results
 #END FUNCTION
 #===============================================================================
