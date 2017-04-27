@@ -33,7 +33,7 @@ def index():
 @app.route('/q')
 def query():
 	queryString = request.args.get('queryString')
-	raw_results = searcher.execute_pylastic_search("San Francisco", type = 'bool')
+	raw_results = searcher.execute_pylastic_search(queryString, type = 'bool')
 	results = []
 	for single_result in raw_results:
 		dict_form = {}
