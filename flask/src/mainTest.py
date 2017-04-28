@@ -1,4 +1,3 @@
-
 # import httplib
 # import csv2es
 # import pyelasticsearch
@@ -7,14 +6,18 @@
 # from elasticsearch_dsl.connections import connections
 # from elasticsearch_dsl import Search, Q
 
+
 import Pylastic_Interface as searcher
-
-
-results = searcher.execute_pylastic_search("Education", type = 'bool')
-
+  
+results = searcher.execute_pylastic_search("Alaska", type = 'bool')
+   
 if len(results) > 3:
     for r in results[:3]:
         print r
+
+
+# es = Elasticsearch(timeout=300)
+# es.indices.delete(index = "_all")
 
 #------------------------OLD CODE----------------------------------- 
 # 
