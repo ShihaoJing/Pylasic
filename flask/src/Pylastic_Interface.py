@@ -89,6 +89,33 @@ def execute_pylastic_NON_dataFields_search(inputString,):
 # 
 #===============================================================================
 
+def getURLlistFromDistribution(distributionInfo_listOfDict):
+    '''
+    '''
+    return_list_urls = []
+    
+    for eachContainer in distributionInfo_listOfDict:
+        if 'accessURL' in eachContainer.keys():
+            return_list_urls.append(eachContainer['accessURL'])
+        elif 'downloadURL' in eachContainer.keys():
+            return_list_urls.append(eachContainer['downloadURL'])
+        else:
+            allValues = list(eachContainer.values())
+            for eachValue in allValues:
+                if eachValue[1].startswith("http") or \
+                        eachValue[1].startswith("www"):
+                    return_list_urls.append(eachValue[1])
+                #end if
+            #end for
+        #end else
+    #end for
+    return return_list_urls
+                             
+
+#===============================================================================
+# 
+#===============================================================================
+
 def filter_results(result_list):
     '''
     @summary: remove duplicates, and return only the 
@@ -98,10 +125,11 @@ def filter_results(result_list):
     for single_result in result_list:
         try:
             single_filtered_result = []
-            single_filtered_result.append(single_result['datasetName'])
-            single_filtered_result.append(single_result['datasetDescription'])
-            single_filtered_result.append(single_result['datasetDistribution'])
-            single_filtered_result.append( single_result.meta.score)            
+            single_filtered_result.append(single_result['_source']['datasetName'])
+            single_filtered_result.append(single_result['_source']['datasetDescription'])
+            single_filtered_result.append(
+                tuple(getURLlistFromDistribution(single_result['_source']['datasetDistribution'])))
+            single_filtered_result.append( single_result['_score'])            
             filtered_results_set.add(tuple(single_filtered_result))
         except:
             print("Unexpected error, unable to find the expected fields in the doc")
