@@ -9,16 +9,26 @@
 
 import Pylastic_Interface as searcher
   
-results = searcher.execute_pylastic_search("Alaska", type = 'bool')
+
+#results = searcher.execute_pylastic_search("University of Arizona", type = 'bool')
+# results = searcher.execute_pylastic_search("data/STNAM/ARIZONA", type = 'bool')
+
+results = searcher.execute_pylastic_search("data/SAT_AVG gte:1100 lte:1200", type = 'single_range')
+
    
-if len(results) > 3:
-    for r in results[:3]:
+if len(results) > 0:
+    end_index = 3
+    if len(results) <end_index:
+        end_index = len(results)
+    for r in results[:end_index]:
         print r
+        
 
-
+#===============================================================================
+# 
+#===============================================================================
 # es = Elasticsearch(timeout=300)
 # es.indices.delete(index = "_all")
-
 #------------------------OLD CODE----------------------------------- 
 # 
 # connections.create_connection(hosts=['localhost:9200'], timeout=20)
