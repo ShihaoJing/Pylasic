@@ -13,7 +13,7 @@ import Pylastic_Interface as searcher
 #results = searcher.execute_pylastic_search("University of Arizona", type = 'bool')
 # results = searcher.execute_pylastic_search("data/STNAM/ARIZONA", type = 'bool')
 
-results = searcher.execute_pylastic_search("data/SAT_AVG gte:1100 lte:1200", type = 'single_range')
+results = searcher.execute_pylastic_search("@City: New York @State: NY", type = 'datafield')
 
    
 if len(results) > 0:

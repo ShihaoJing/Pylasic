@@ -41,6 +41,9 @@ def execute_pylastic_search(input_string, **kwargs):
             elif kwargs['type'] == 'single_range':
                 a = execute_pylastic_singleRange_search(single_part)
                 results = results + a.hits.hits 
+            elif kwargs['type'] == 'datafield':
+                a = execute_pylastic_dataFields_search(single_part)
+                results = results + a.hits.hits    
     if len(results) >0 :
         results = filter_results(results)
     return results
@@ -84,6 +87,19 @@ def execute_pylastic_dataFields_search(inputString,**kwargs):
     
     '''
     #to be done
+    s = Search();
+    datafield_parts = inputString.split('@')
+    #the first element of datafield should be an empty string. We want to remove that
+    datafield_parts = datafield_parts[1:]
+    print(datafield_parts)
+    for field in datafield_parts:
+        field = field.split(':')
+        attribute = field[0]
+        value = field[1]
+
+        #attribute,value = field.split(',')
+        #print(attribute)
+        #print(value)
     pass
 #===============================================================================
 # 
