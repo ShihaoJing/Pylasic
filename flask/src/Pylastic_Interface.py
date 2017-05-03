@@ -88,18 +88,31 @@ def execute_pylastic_dataFields_search(inputString,**kwargs):
     '''
     #to be done
     s = Search();
+    q = None
+    response = None
+    response_list = list()
     datafield_parts = inputString.split('@')
     #the first element of datafield should be an empty string. We want to remove that
     datafield_parts = datafield_parts[1:]
     print(datafield_parts)
     for field in datafield_parts:
         field = field.split(':')
-        attribute = field[0]
-        value = field[1]
-
-        #attribute,value = field.split(',')
-        #print(attribute)
-        #print(value)
+        attribute = field[0].lstrip().rstrip()
+        value = field[1].lstrip().rstrip()
+        
+        #keyword = getattr(data,attribute)
+        q = Q('bool',
+            must=[Q('match', attrList=attribute)] #| Q('match', keyword=value)]
+        )
+        #search
+        s = s.query(q)
+        print("running field search on attrList")
+        response = s.execute()
+        #going to work with a list of responses
+        response_list.append(response)
+    for r in response_list:
+        return r #this will only return the first one
+    #return response
     pass
 #===============================================================================
 # 

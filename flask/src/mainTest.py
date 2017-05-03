@@ -13,7 +13,7 @@ import Pylastic_Interface as searcher
 #results = searcher.execute_pylastic_search("University of Arizona", type = 'bool')
 # results = searcher.execute_pylastic_search("data/STNAM/ARIZONA", type = 'bool')
 
-results = searcher.execute_pylastic_search("@City: New York @State: NY", type = 'datafield')
+results = searcher.execute_pylastic_search("@City: San Francisco", type = 'datafield')
 
    
 if len(results) > 0:
