@@ -97,17 +97,14 @@ def execute_pylastic_dataFields_search(inputString,**kwargs):
     field = inputString.split(':')
     attribute = field[0].lstrip().rstrip()
     value = field[1].lstrip().rstrip()
-        
-    #keyword = getattr(data,attribute)
     q = Q('bool',
-        must=[Q('match', attrList=attribute)] #| Q('match', keyword=value)]
+        must=[Q('match', attrList=attribute) | Q('match', data=value)] #data=value does not work here
     )
     #search
     s = s.query(q)
     print("running field search on attrList")
     response = s.execute()
-    return response
-    #return response
+    return response #return response
     pass
 #===============================================================================
 # 
