@@ -32,11 +32,15 @@ def execute_pylastic_search(input_string, **kwargs):
     '''
     results = []
     parts = input_string.split(",")
-    for single_part in parts:        
+    for single_part in parts: #this splitting allows many searches , 
+                            #BUT currently all the results are put in one big container       
         if 'type' in kwargs:
             if kwargs['type'] == 'bool':
                 a = execute_pylastic_boolean_search(single_part)
                 results = results + a.hits.hits
+            elif kwargs['type'] == 'single_range':
+                a = execute_pylastic_singleRange_search(single_part)
+                results = results + a.hits.hits 
     if len(results) >0 :
         results = filter_results(results)
     return results
@@ -50,8 +54,17 @@ def execute_pylastic_boolean_search(input_string):
     @return: an ordered list of results. [{doc1 info}, {doc2 info},....]
         each doc info contains the "name", "URL", "snippet","score". snippet contains the matching parts of the doc.
     '''
-    s = Search()
-    q = Q('bool',must=[Q('match', _all=input_string)])    
+    s = Search()      
+    path_parts = input_string.split("/")
+    q = None
+    if len(path_parts) > 1:
+        path_to_search = ".".join(path_parts[:-2])
+        area_to_search = ".".join(path_parts[:-1]) #+ ["_all"])
+        q =Q("nested", path = path_to_search ,query = Q('bool',
+            must=[Q('match',**{area_to_search:path_parts[-1]})]))                
+        
+    else:                
+        q = Q('bool',must=[Q('match', _all=input_string)])            
     s = s.query(q)
     print("running boolean query \n", s.to_dict())    
     response = s.execute()
@@ -148,6 +161,54 @@ def filter_results(result_list):
     return return_results_list    
     
     
+    
+#===========================================================================
+# 
+#===========================================================================
+
+def execute_pylastic_singleRange_search(input_string):
+    '''
+    @note: See https://github.com/elastic/elasticsearch-dsl-py/issues/40 for range queries in dsl
+    @param inputString: expect the field name and the range parameters in  
+    the format Age gte:10 lte:20
+    @summary: Does the following type of search for a single field
+        "query": {
+        "range" : {
+            "age" : {
+                "gte" : 10,
+                "lte" : 20,
+                "boost" : 2.0
+            }
+    '''
+    
+    parts = input_string.split()
+    if len(parts) == 1 or ":" not in input_string:
+        raise(Exception,\
+            "Range was not specified properly when calling execute_pylastic_singleRange_search")
+    #fill the range conditions into range_param_dict         
+    range_param_dict = {}
+    for i in range(1,len(parts)):
+        rangeParts = parts[i].split(":")
+        range_param_dict[rangeParts[0]] = rangeParts[1]    
+    s = Search()    
+    path_parts = parts[0].split("/")
+    q = None
+    #check if this is a nested search, i.e. the path has "/"
+    if len(path_parts) > 1:
+        path_to_search = ".".join(path_parts[:-1])
+        area_to_search = ".".join(path_parts) #+ ["_all"])
+        a = area_to_search
+        range_search_dict = {a:range_param_dict}
+        q =Q("nested", path = path_to_search ,query = Q('range',**range_search_dict))                
+        
+    else:#it is not a nested search
+        range_search_dict = {a:range_param_dict}                
+        q = Q('range',**range_search_dict)     
+ 
+    s = s.query(q)
+    print("running range query on single field \n", s.to_dict())    
+    response = s.execute()
+    return response
     
     
 
