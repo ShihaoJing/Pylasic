@@ -98,7 +98,8 @@ def execute_pylastic_dataFields_search(inputString,**kwargs):
     attribute = field[0].lstrip().rstrip()
     value = field[1].lstrip().rstrip()
     q = Q('bool',
-        must=[Q('match', attrList=attribute) | Q('match', data=value)] #data=value does not work here
+        must=[Q('match', attrList=attribute) | Q('match', _all=value)], #data=value does not work here. Search for the value accross all fields for now
+        should=[Q('match', data=value)]
     )
     #search
     s = s.query(q)
