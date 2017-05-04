@@ -13,15 +13,14 @@ from nltk.draw.cfg import CFGEditor
 
 #fucntion that parses the query
 def parseQuery(query):
-	result = []
-	input = query.split("#")
-	#ASSUME NO ERROR FOR NOW
-	#input[0] is the path that we need to search
-	path = "data/%s"%(input[0])
-	values = input[1]
-	result = [path, values] #["data/SAT_AVG","[gte:1000, lte:1200]"]
-	return result
-	
+    result = []
+    input = query.split("#")
+    #ASSUME NO ERROR FOR NOW
+    #input[0] is the path that we need to search
+    path = "data/%s"%(input[0])
+    values = input[1]
+    result = [path, values] #["data/SAT_AVG","[gte:1000, lte:1200]"]
+    return result
 
 
 #results = searcher.execute_pylastic_search("University of Arizona", type = 'bool')
@@ -31,17 +30,14 @@ results = []
 query = "@SAT_AVG#[gte:1000 , lte:1200]"
 
 if(query[0] == '@'):
-	inputString = parseQuery(query[1:])
-	#results = searcher.execute_pylastic_search(inputString[0], inputString[1], type = 'single_range')
+    inputString = parseQuery(query[1:])
+    #results = searcher.execute_pylastic_search(inputString[0], inputString[1], type = 'single_range')
 else:
-	results = searcher.execute_pylastic_search(query, type = 'bool')
+    results = searcher.execute_pylastic_search(query, type = 'bool')
 
 results = searcher.execute_pylastic_search("data/SAT_AVG#[gte:1100 , lte:1200]", type = 'single_range')
   
-
-
-   
-if len(results) > 0:CFGEditor
+if len(results) > 0:
     end_index = 3
     if len(results) <end_index:
         end_index = len(results)
