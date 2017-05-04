@@ -31,7 +31,7 @@ def execute_pylastic_search(input_string, **kwargs):
             each doc info contains the "name", "URL", "snippet","score". snippet contains the matching parts of the doc.
     '''
     results = []
-    parts = input_string.split(",")
+    parts = input_string.split("&&")#arbitrary separator between terms
     for single_part in parts: #this splitting allows many searches , 
                             #BUT currently all the results are put in one big container       
         if 'type' in kwargs:
@@ -181,15 +181,23 @@ def execute_pylastic_singleRange_search(input_string):
             }
     '''
     
-    parts = input_string.split()
-    if len(parts) == 1 or ":" not in input_string:
+    parts = input_string.split("#")
+    if len(parts) == 1 or "[" not in input_string or  "]" not in input_string:
         raise(Exception,\
             "Range was not specified properly when calling execute_pylastic_singleRange_search")
+        
     #fill the range conditions into range_param_dict         
-    range_param_dict = {}
-    for i in range(1,len(parts)):
-        rangeParts = parts[i].split(":")
+    
+    range_info_string = parts[1]
+    range_info_string = range_info_string.replace("[","")
+    range_info_string = range_info_string.replace("]","")
+    constraints_parts = range_info_string.split(",")
+    range_param_dict = {} 
+    for i in range(0,len(constraints_parts)):
+        constraints_parts[i] = constraints_parts[i].strip()                
+        rangeParts = constraints_parts[i].split(":")
         range_param_dict[rangeParts[0]] = rangeParts[1]    
+        
     s = Search()    
     path_parts = parts[0].split("/")
     q = None

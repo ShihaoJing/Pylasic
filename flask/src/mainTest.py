@@ -8,20 +8,27 @@
 
 
 import Pylastic_Interface as searcher
+from nltk.draw.cfg import CFGEditor
   
 
 #results = searcher.execute_pylastic_search("University of Arizona", type = 'bool')
+
 # results = searcher.execute_pylastic_search("data/STNAM/ARIZONA", type = 'bool')
 
-results = searcher.execute_pylastic_search("data/SAT_AVG gte:1100 lte:1200", type = 'single_range')
+results = searcher.execute_pylastic_search("data/SAT_AVG#[gte:1100 , lte:1200]", type = 'single_range')
+  
+
 
    
-if len(results) > 0:
+if len(results) > 0:CFGEditor
     end_index = 3
     if len(results) <end_index:
         end_index = len(results)
     for r in results[:end_index]:
         print r
+        
+    for res in results:
+        print res['score']
         
 
 #===============================================================================
