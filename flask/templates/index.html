@@ -97,7 +97,14 @@
           <p class="title">{{result.datasetName}}</p>
           <p class="description">{{result.datasetDescription}}</p>
           <p class="keyword">Keyword: {{result.keyword}}</p>
-          <a v-bind:href="result.downloadURL">Download</a>
+          <button type="button" class="btn btn-info" data-toggle="collapse" v-bind:data-target="'#' + result.datasetName">Download</button>
+          <div v-bind:id="result.datasetName" class="collapse">
+            <ul>
+              <li v-for="url in result.datasetDistribution">
+                <a v-bind:href="url">{{url}}</a>
+              </li>
+            </ul>
+          </div>
         </li>
 
         <li v-if="!hasResult">

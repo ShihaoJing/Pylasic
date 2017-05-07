@@ -33,13 +33,14 @@ def index():
 @app.route('/q')
 def query():
 	queryString = request.args.get('queryString')
-	raw_results = searcher.execute_pylastic_search("San Francisco", type = 'bool')
+	raw_results = searcher.execute_pylastic_search(queryString, type = 'bool')
 	results = []
 	for single_result in raw_results:
 		dict_form = {}
 		dict_form['datasetName'] = single_result['datasetName']
 		dict_form['datasetDescription'] = single_result['datasetDescription']
 		dict_form['score'] = single_result['score']
+		dict_form['datasetDistribution'] = single_result['datasetDistribution']
 		results.append(dict_form)
 	print len(results)
 	return jsonify(results)
