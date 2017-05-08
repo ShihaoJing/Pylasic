@@ -43,6 +43,7 @@ def execute_pylastic_search(input_string, **kwargs):
                 results = results + a.hits.hits 
     if len(results) >0 :
         results = filter_results(results)
+        add_additional_UI_info(results)
     return results
 #END FUNCTION
 #===============================================================================
@@ -134,7 +135,7 @@ def filter_results(result_list):
     @summary: remove duplicates, and return only the 
     DatasetName, DatasetDescription, DatasetURL,
     '''
-    filtered_results_set = set()
+    filtered_results_set = set()    
     for single_result in result_list:
         try:
             single_filtered_result = []
@@ -218,7 +219,22 @@ def execute_pylastic_singleRange_search(input_string):
     response = s.execute()
     return response
     
-    
+
+#===============================================================================
+# 
+#===============================================================================
+def add_additional_UI_info(list_dicts):
+    '''
+    @summary: This is for helping the UI. For now it just adds a unique id for each entry
+    '''
+    id_num = 0
+    for each_dict in list_dicts:
+        id_num += 1
+        each_dict['id'] = id_num        
+#===============================================================================
+# 
+#===============================================================================
+
 
 #===============================================================================
 # 
