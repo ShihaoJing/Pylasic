@@ -6,13 +6,13 @@ to search and get results from the Elastic Search instance/node that is running
 
 
 
+import copy
 import httplib
 
 import csv2es
 from elasticsearch import Elasticsearch
 import elasticsearch
 import pyelasticsearch
-
 
 from elasticsearch_dsl import Search, Q
 from elasticsearch_dsl.connections import connections
@@ -136,6 +136,7 @@ def filter_results(result_list):
     DatasetName, DatasetDescription, DatasetURL,
     '''
     filtered_results_set = set()    
+    seen_results_set = set()
     for single_result in result_list:
         try:
             single_filtered_result = []
@@ -143,8 +144,12 @@ def filter_results(result_list):
             single_filtered_result.append(single_result['_source']['datasetDescription'])
             single_filtered_result.append(
                 tuple(getURLlistFromDistribution(single_result['_source']['datasetDistribution'])))
-            single_filtered_result.append( single_result['_score'])            
-            filtered_results_set.add(tuple(single_filtered_result))
+            if tuple(single_filtered_result) not in seen_results_set:
+                seen_results_set.add(tuple(single_filtered_result))                                 
+                single_filtered_result.append( single_result['_score'])
+                single_filtered_result.append( tuple(single_result['_source']['keyword']))
+                single_filtered_result.append( tuple(single_result['_source']['attrList']))             
+                filtered_results_set.add(tuple(single_filtered_result))
         except:
             print("Unexpected error, unable to find the expected fields in the doc")
     #end for loop
@@ -158,6 +163,8 @@ def filter_results(result_list):
         dict_form['datasetDescription'] = single_result[1]
         dict_form['datasetDistribution'] = single_result[2]
         dict_form['score'] = single_result[3]
+        dict_form['keywords'] = single_result[3]
+        dict_form['attrList'] = single_result[3]
         return_results_list.append(dict_form)
     return return_results_list    
     
