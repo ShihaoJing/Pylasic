@@ -202,7 +202,7 @@ def execute_pylastic_singleRange_search(input_string):
     constraints_parts = range_info_string.split(",")
     range_param_dict = {} 
     for i in range(0,len(constraints_parts)):
-        constraints_parts[i] = constraints_parts[i].replace(" ","")                
+        constraints_parts[i] = constraints_parts[i].replace(" " , "")                
         rangeParts = constraints_parts[i].split(":")
         range_param_dict[rangeParts[0]] = rangeParts[1]    
         
