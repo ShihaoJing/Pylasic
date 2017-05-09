@@ -13,13 +13,80 @@ from nltk.draw.cfg import CFGEditor
 
 #fucntion that parses the query
 def parseQuery(query):
-    #result = []
-    #input = query.split("#")
-    #ASSUME NO ERROR FOR NOW
-    #input[0] is the path that we need to search
-    #path = "data/%s"%(input[0])
-    #values = input[1]
-    result = "data/%s"%(query) #["data/SAT_AVG","[gte:1000, lte:1200]"]
+    searchType = None
+    #first check the number of @ symbols in the query
+    fields = query.split("@")
+    #keywords = ["lte","gte","lt","gt"]
+    #print(fields)
+    bool_count = 0;
+    range_count = 0;
+    if len(fields) > 1:
+        #bool_count = 0
+        #range_count = 0
+        #type of search can either be multi_range or mixed
+        for field in fields:
+            #print(field)
+            #b = 0
+            #r = 0
+            input = field.split("#")
+            fieldname = input[0]
+            arguments = input[1].replace("[","").replace("]","")
+            args = arguments.split(",")
+            #print(args)
+            for arg in args:
+                print(k)
+                print(arg)
+                arg = arg.strip(" ")
+                #print(arg)
+                argfields = arg.split(":")
+                #print(argfields)
+                if len(argfields) == 1:
+                    #boolean search
+                    bool_count = bool_count + 1
+                elif len(argfields) == 2:
+                    #range search
+                    range_count = range_count + 1 #this is not the case. Test to see if the name is the argument is valid
+                    #TODO: Check to see if the arguments are valid
+                else:
+                    #this is an error
+                    print("error")
+        if(bool_count != 0 and range_count != 0):
+            searchType = "mixed"
+        elif(bool_count != 0 and range_count == 0):
+            searchType = "bool"
+        elif(bool_count == 0 and range_count != 0):
+            searchType = "multi_range"
+    else:
+        #type of search can either be single rangle of bool
+        #it will be bool if there is no detection of any of the keywords
+        inputValues = query.split("#")
+        fieldname = inputValues[0]
+        arguments = inputValues[1].replace("[", "").replace("]", "")
+        args = arguments.strip(" ").split(",")
+        for arg in args:
+            argfields = arg.split(":")
+            if len(argfields) == 1:
+                #searchType = "bool"
+                bool_count = bool_count + 1
+            elif len(argfields) == 2:
+                #searchType = "single_range"
+                range_count = range_count + 1
+            else:
+                print(error)
+        if bool_count != 0 and range_count != 0:
+            print("invalid syntax")
+        elif bool_count != 0:
+            searchType = 'bool'
+        elif range_count != 0:
+            searchType = 'single_range'
+        else:
+            print("It shouldn't have to come to this")
+    #print(bool_count)
+    #print(range_count)
+    print(searchType)
+    result = []
+    result.append("data/%s"%(query))
+    result.append(searchType)
     return result
 
 
@@ -27,12 +94,13 @@ def parseQuery(query):
 
 # results = searcher.execute_pylastic_search("data/STNAM/ARIZONA", type = 'bool')
 results = []
-query = "@SAT_AVG#[gte:1000 , lte:1200]"
+query = "@SAT_AVG#[gte:1000, lte:1200]"
 
-#inputString = query
+query = query.strip(" ")
 if(query[0] == '@'):
     inputString = parseQuery(query[1:])
-    results = searcher.execute_pylastic_search(inputString, type = 'single_range')
+    print(inputString)
+    results = searcher.execute_pylastic_search(inputString[0], type = inputString[1])
 else:
     results = searcher.execute_pylastic_search(query, type = 'bool')
 
