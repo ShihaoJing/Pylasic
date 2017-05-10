@@ -16,6 +16,8 @@ import pyelasticsearch
 
 from elasticsearch_dsl import Search, Q
 from elasticsearch_dsl.connections import connections
+from bokeh.charts.builders.area_builder import Area
+from contextlib import nested
 
 
 connections.create_connection(hosts=['localhost:9200'], timeout=20)
@@ -41,6 +43,9 @@ def execute_pylastic_search(input_string, **kwargs):
             elif kwargs['type'] == 'single_range':
                 a = execute_pylastic_singleRange_search(single_part)
                 results = results + a.hits.hits 
+            elif kwargs['type'] == 'multiple_range':
+                a = execute_pylastic_multipleRange_search(single_part)
+                results = results + a.hits.hits
     if len(results) >0 :
         results = filter_results(results)
         add_additional_UI_info(results)
@@ -133,7 +138,7 @@ def getURLlistFromDistribution(distributionInfo_listOfDict):
 def filter_results(result_list):
     '''
     @summary: remove duplicates, and return only the 
-    DatasetName, DatasetDescription, DatasetURL,
+    DatasetName, DatasetDescription, DatasetURL, Score, Keywords, and AttributeList
     '''
     filtered_results_set = set()    
     seen_results_set = set()
@@ -194,8 +199,7 @@ def execute_pylastic_singleRange_search(input_string):
         raise(Exception,\
             "Range was not specified properly when calling execute_pylastic_singleRange_search")
         
-    #fill the range conditions into range_param_dict         
-    
+    #fill the range conditions into range_param_dict             
     range_info_string = parts[1]
     range_info_string = range_info_string.replace("[","")
     range_info_string = range_info_string.replace("]","")
@@ -226,7 +230,84 @@ def execute_pylastic_singleRange_search(input_string):
     response = s.execute()
     return response
     
+#===========================================================================
+# 
+#===========================================================================
 
+def execute_pylastic_multipleRange_search(input_string):
+    '''
+    
+    @param inputString: expect multiple cases of the form @<field>#[range/values]@<field2>#values2]
+    @summary: Does the following type of search which has many ranged fields
+        "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "range": {
+                                "created_at": {
+                                    "gte": "2013-12-09T00:00:00.000Z"
+                                }
+                            }
+                        },
+                        {
+                            "range": {
+                                "happens_on": {
+                                    "lte": "2013-12-16T00:00:00.000Z"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+    '''
+    
+    range_conditions_list = input_string.split("]")
+    #remove the last one as it will be '' empty string
+    range_conditions_list = range_conditions_list[:-1]
+    if "[" not in input_string and "]" not in input_string :
+        raise(Exception,\
+            "Range was not specified properly or only one range when calling multipleRange search")
+    
+    s = Search()       
+    query_list = [] 
+    path_to_search = None #this will be set if it is a nested search
+    #take each of the range conditions
+    for single_range_condition in range_conditions_list:
+        #seperate at the # to get the location and the range condition parts
+        parts = single_range_condition.split("#")
+        #fill the range conditions into range_param_dict             
+        range_info_string = parts[1]
+        range_info_string = range_info_string.replace("[","")        
+        constraints_parts = range_info_string.split(",")
+        range_param_dict = {} 
+        for i in range(0,len(constraints_parts)):
+            constraints_parts[i] = constraints_parts[i].replace(" " , "")                
+            rangeParts = constraints_parts[i].split(":")
+            range_param_dict[rangeParts[0]] = rangeParts[1]    
+                    
+        path_parts = parts[0].split("/")
+        area_to_search = ".".join(path_parts) #+ ["_all"])
+        q = None
+        #check if this is a nested search, i.e. the path has "/"
+        if len(path_parts) > 1:
+            path_to_search = ".".join(path_parts[:-1])                        
+        range_search_dict = {area_to_search:range_param_dict}                                    
+        q =Q('range',**range_search_dict)
+    
+        query_list.append(q)
+    #---END FOR LOOP
+    nested_query = Q('bool',should=query_list)
+    main_query = None
+    if path_to_search != None:
+        path_to_search = path_to_search.replace(" ","")
+        main_query = Q("nested", path = path_to_search, query = nested_query )
+    else:
+        main_query = nested_query 
+    s = s.query(main_query)
+    print("running multiple range query on many fields \n", s.to_dict())    
+    response = s.execute()
+    return response
+    
 #===============================================================================
 # 
 #===============================================================================
