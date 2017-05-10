@@ -45,20 +45,31 @@
         padding-left: 0px;
     }
 
-    ul li{
+    p.description{
+      font-style: bold;
+      font-size: 15px;
+      padding: 5px;
+    }
+
+    ul li.general{
         border-bottom: 3px solid #ddd;
         padding: 10px;
         overflow: hidden;
     }
 
+    ul li.link{
+        padding: 10px;
+        overflow: hidden;
+    }
+
     ul li p.keyword{
-        font-weight: bold;
-        color:#6e7a7f;
+      font-size: 15px;
+      color:#6e7a7f;
     }
 
     ul li p.title{
         font-weight: bold;
-        font-size: 20px;
+        font-size: 25px;
         color:#31b0d5;
     }
 
@@ -66,6 +77,7 @@
         font-style: italic;
         font-size: 15px;
         color:#6e7a7f;
+        padding: 10px;
     }
 
     ul li a{
@@ -73,12 +85,105 @@
         padding-top: 12px;
     }
 
+    details {
+      border-radius: 3px;
+      background: #EEE;
+      margin: 1em 0;
+    }
+
+    summary {
+      background: #1bbf99;
+      color: #FFF;
+      border-radius: 3px;
+      padding: 5px 10px;
+      outline: none;
+    }
+
+    /* Style the summary when details box is open */
+    details[open] summary {
+      background: #69c773;
+      color: #333;
+    }
+
+    /* Custom Markers */
+    #custom-marker summary {
+      font-size: 17px;
+      vertical-align: top;
+    }
+
+    #custom-marker summary::-webkit-details-marker {
+      display: none;
+    }
+
+    #custom-marker summary:before {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      content: "";
+      background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/4621/treehouse-icon-sprite.png);
+      background-repeat: no-repeat;
+      background-position: 0 0;
+    }
+
+    #custom-marker[open] summary:before {
+      background-position: -18px 0;
+    }
+
+    #loader {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 1;
+      width: 150px;
+      height: 150px;
+      margin: -75px 0 0 -75px;
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 80px;
+      height: 80px;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Add animation to "page content" */
+    .animate-bottom {
+      position: relative;
+      -webkit-animation-name: animatebottom;
+      -webkit-animation-duration: 1s;
+      animation-name: animatebottom;
+      animation-duration: 1s
+    }
+
+    @-webkit-keyframes animatebottom {
+      from { bottom:-100px; opacity:0 } 
+      to { bottom:0px; opacity:1 }
+    }
+
+    @keyframes animatebottom { 
+      from{ bottom:-100px; opacity:0 } 
+      to{ bottom:0; opacity:1 }
+    }
+
+
+
   </style>
 </head>
 
 
 
-<body>
+<body onload="hideLoader()">
   <div class="container-fluid" id="app">
     <div class="row search-area">
       <div class="col-2">
@@ -89,29 +194,68 @@
       </div>
     </div>
     <div class="row result-area">
-      <div class="col-2"></div>
-      <div class="col-6">
-      <ul>
-        <!-- Render a li element for every entry in the computed filteredArticles array. -->          
-        <li v-for="result in resultList" v-if="hasResult">
-          <p class="title">{{result.datasetName}}</p>
-          <p class="description">{{result.datasetDescription}}</p>
-          <p class="keyword">Keyword: {{result.keyword}}</p>
-          <button type="button" class="btn btn-info" data-toggle="collapse" v-bind:data-target="'#' + result.datasetName">Download</button>
-          <div v-bind:id="result.datasetName" class="collapse">
-            <ul>
-              <li v-for="url in result.datasetDistribution">
-                <a v-bind:href="url">{{url}}</a>
-              </li>
-            </ul>
-          </div>
-        </li>
+      <div class="col-1"></div>
 
-        <li v-if="!hasResult">
-          <p class="title">No Results</p>
-        </li>
-      </ul>
-      </div>
+      <div class="col-6">
+        <div id="loader"></div>
+        <div id="content">
+          <ul>
+            <!-- Render a li element for every entry in the computed filteredArticles array. -->          
+            <li class="general" v-for="result in resultList" v-if="hasResult">
+              <p class="title">{{result.datasetName}}</p>
+              <details>
+                <summary>Description</summary>
+                <p class="description">{{result.datasetDescription}}</p>
+              </details>
+              <details>
+                <summary style="background: #1b64bf">Keywords</summary>
+                <p class="keyword">{{result.keywords}}</p>
+              </details>
+              <details>
+                <summary style="background: #971bbf">Features</summary>
+                <p class="keyword">{{result.attrList}}</p>
+              </details>
+              <button type="button" class="btn btn-info" data-toggle="collapse" v-bind:data-target="'#' + result.id">Download</button>
+              <div v-bind:id="result.id" class="collapse">
+                <ul>
+                  <li class="link" v-for="url in result.datasetDistribution">
+                    <a v-bind:href="url">{{url}}</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li v-if="!hasResult">
+              <p class="title">Try search something...</p>
+            </li>
+          </ul>
+        </div>
+      </div> <!-- div6 -->
+      <div class="col-5">
+          <h3>Instructions for advanced search</h1>
+          <details>
+            <summary>Phrase Search</summary>
+            <p class="description">
+            <b>p: to be or not to be <br></b>
+            Start with "p:" when searching phrase.
+            </p>
+          </details>
+          <details>
+            <summary>Range Search</summary>
+            <p class="description">
+            <b>@State#[new york],@population#[gte:10000 , lt:20000] <br></b>
+            The "@" symbol starts each field search, and is followed by the field you want to search in. <br>
+            The "#" symbol starts the list of values that you expect to find in the field. <br>
+            If you expect a numeric field, then the upper and lower bound of values must be specified. <br>
+            to specify the bounds, the following conditions can be used: <br>
+              a) gte - greater than or equal to <br>
+              b) lte - less than or equal to <br>
+              c) gt - greater than <br>
+              d) lt - less than <br>
+            </p>
+          </details>
+      </div> <!-- div6 -->
+
     </div>      
   </div><!-- /.container -->
 
