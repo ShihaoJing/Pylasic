@@ -130,3 +130,30 @@ def checkProperOps():
         elif queryOperators[0] == "gt" or queryOperators[0] == "gte":
             if queryOperators[1] != "lte" and queryOperators[1] != "lt":
                 printError("Bounds of the range search are not properly defined")
+                
+                
+#===============================================================
+# 
+#===============================================================
+
+def parseQuery2(raw_query):
+    '''
+    '''
+    search_type = None
+    preProcess_query = raw_query
+    #check if it is a boolean search, field search, or phrase search
+    if "@" in raw_query:
+        search_type = 'mixed'
+    elif "p:" in raw_query:
+        search_type = 'phrase'
+    else :
+        search_type = 'bool'
+    
+    if search_type == 'mixed':
+        preProcess_query = raw_query.replace("@", "data/")
+    elif search_type == 'phrase':
+        preProcess_query = raw_query.replace("p:", "")
+    
+    return (preProcess_query,search_type)
+        
+        
