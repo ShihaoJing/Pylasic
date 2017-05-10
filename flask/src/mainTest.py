@@ -8,26 +8,22 @@
 
 
 import Pylastic_Interface as searcher
-import Handle_Query as handler
+#import Handle_Query as handler
 from nltk.draw.cfg import CFGEditor
   
+query = "data/SAT_AVG#[gte:1000]"
+query = "data/SAT_AVG#[gte:100] data/NUMBRANCH#[gt:1] "
+query = "data/INSTNM#[Alabama State University] data/SAT_AVG#[gte:100] data/NUMBRANCH#[gt:1] "
+results = searcher.execute_pylastic_search(query, type = 'mixed')
 
-
-#results = searcher.execute_pylastic_search("University of Arizona", type = 'bool')
-
-# results = searcher.execute_pylastic_search("data/STNAM/ARIZONA", type = 'bool')
-results = []
-query = "@SAT_AVG#[gte:1000]"
-
-query = query.strip(" ")
-if(query[0] == '@'):
-    inputString = handler.parseQuery(query[1:])
-    print(inputString)
-    results = searcher.execute_pylastic_search(inputString[0], type = inputString[1])
-else:
-    results = searcher.execute_pylastic_search(query, type = 'bool')
-
-#results = searcher.execute_pylastic_search(inputString, type = 'single_range')
+# query = "@NUMBRANCH#[gte:2, lt:200]"
+# if('@' in query):
+#     inputString = parseQuery(query[1:])
+#     print(inputString)
+#     results = searcher.execute_pylastic_search(inputString[0], type = inputString[1])
+# else:
+#     results = searcher.execute_pylastic_search(query, type = 'bool')
+ 
   
 if len(results) > 0:
     end_index = 3
@@ -38,7 +34,7 @@ if len(results) > 0:
         
     for res in results:
         print res['score']
-        
+
 
 
 #===============================================================================
