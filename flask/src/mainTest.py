@@ -44,7 +44,7 @@ def parseQuery(query):
                     #range search
                     #check to see that there are two values for the range search
                     if len(args) > 2:
-                        print(len(args))
+                        #print(len(args))
                         printError("A range query should have no more than 2 arguments to set the bounds")
                     checkProperRange(argfields)
                     range_count = range_count + 1 #this is not the case. Test to see if the name is the argument is valid
