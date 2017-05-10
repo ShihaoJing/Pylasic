@@ -8,21 +8,23 @@
 
 
 import Pylastic_Interface as searcher
-#import Handle_Query as handler
+import Handle_Query as handler
 from nltk.draw.cfg import CFGEditor
   
 query = "data/SAT_AVG#[gte:1000]"
 query = "data/SAT_AVG#[gte:100] data/NUMBRANCH#[gt:1] "
 query = "data/INSTNM#[Alabama State University] data/SAT_AVG#[gte:100] data/NUMBRANCH#[gt:1] "
-results = searcher.execute_pylastic_search(query, type = 'mixed')
+query = "@INSTNM#[Alabama State University] @SAT_AVG#[gte:100] @NUMBRANCH#[gt:1] "
 
-# query = "@NUMBRANCH#[gte:2, lt:200]"
-# if('@' in query):
-#     inputString = parseQuery(query[1:])
-#     print(inputString)
-#     results = searcher.execute_pylastic_search(inputString[0], type = inputString[1])
-# else:
-#     results = searcher.execute_pylastic_search(query, type = 'bool')
+#results = searcher.execute_pylastic_search(query, type = 'mixed')
+
+#query = "@NUMBRANCH#[gte:2, lt:200]"
+if('@' in query):
+    inputString = handler.parseQuery(query[1:])
+    print(inputString)
+    results = searcher.execute_pylastic_search(inputString[0], type = inputString[1])
+else:
+    results = searcher.execute_pylastic_search(query, type = 'bool')
  
   
 if len(results) > 0:
