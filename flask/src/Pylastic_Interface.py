@@ -41,10 +41,15 @@ def execute_pylastic_search(input_string, **kwargs):
             if kwargs['type'] == 'bool':
                 a = execute_pylastic_boolean_search(single_part)
                 results = results + a.hits.hits
+            if kwargs['type'] == 'phrase':
+                a = execute_pylastic_phrase_search(single_part)
+                results = results + a.hits.hits                
             elif kwargs['type'] == 'single_range':
-                a = execute_pylastic_singleRange_search(single_part)
-                results = results + a.hits.hits 
+                raise(Exception,\
+                      "use mixed search, multiple range and single range search is discontinued")                
             elif kwargs['type'] == 'multiple_range':
+                raise(Exception,\
+                      "use mixed search, multiple range and single range search is discontinued")
                 a = execute_pylastic_multipleRange_search(single_part)
                 results = results + a.hits.hits
             elif kwargs['type'] == 'mixed':
@@ -79,6 +84,32 @@ def execute_pylastic_boolean_search(input_string):
     print("running boolean query \n", s.to_dict())    
     response = s.execute()
     return response
+
+#===============================================================================
+# 
+#===============================================================================
+def execute_pylastic_phrase_search(input_string):
+    '''
+    @summary: execute a boolean search with the input string on all fields
+    @return: an ordered list of results. [{doc1 info}, {doc2 info},....]
+        each doc info contains the "name", "URL", "snippet","score". snippet contains the matching parts of the doc.
+    '''
+    s = Search()      
+    path_parts = input_string.split("/")
+    q = None
+    if len(path_parts) > 1:
+        path_to_search = ".".join(path_parts[:-2])
+        area_to_search = ".".join(path_parts[:-1]) #+ ["_all"])
+        q =Q("nested", path = path_to_search ,query = Q('bool',
+            must=[Q('match_phrase',**{area_to_search:path_parts[-1]})]))                
+        
+    else:                
+        q = Q('bool',must=[Q('match_phrase', _all=input_string)])            
+    s = s.query(q)
+    print("running boolean query \n", s.to_dict())    
+    response = s.execute()
+    return response
+
 
 
 #===============================================================================
