@@ -12,6 +12,7 @@ def extractFieldnames(query):
 
 #read in the dictionary
 dictionary = pd.read_csv("../dict/CollegeScorecardDataDictionary.csv")
+print(dictionary.head())
 #print dictionary["developer-friendly name"].head()
 #print dictionary
 query = "@average#[gte:1000] @sat#[lte:1200]"
@@ -36,4 +37,4 @@ for field in fieldnames:
 for field in potential_fields:
 	query += "@%s#%s"%(field[0],field[1])
 
-print query
+#print query
