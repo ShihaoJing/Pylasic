@@ -23,6 +23,7 @@ query = "@INSTNM#[Alabama State University] @SAT_AVG#[gte:100] @NUMBRANCH#[gt:1]
 # results = searcher.execute_pylastic_search(query, type = 'mixed')
 
 query = "@INSTNM#[Alabama State University] @SAT_AVG#[gte:100, lt:200] @NUMBRANCH#[gt:1]"
+query = "@average#[gte:200]"
 #query_preprocessing = handler.parseQuery2(query) 
 query_preprocessing = handler.parseQuery3(query) 
 results = searcher.execute_pylastic_search(query_preprocessing[0],type = query_preprocessing[1])

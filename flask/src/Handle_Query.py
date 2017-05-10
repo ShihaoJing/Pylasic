@@ -1,3 +1,6 @@
+import translateQuery as translator
+
+
 helpMessage = "The \'@\' symbol starts each field search, and is followed by the field you want to search in \nThe \'#\' symbol starts the list of values that you expect to find in the field\nIf you expect a numeric field, the the upper and lower bound of values must be specified.\n To specify the bounds, the following conditions can be used\n a) gte - greater than or equal to\n b) lte - less than or equal to\n c) gt - greater than\n d) lt - less than\nLastly, sperate successive terms inside the \'[..]\' by a comma"
 queryOperators = [] #this is the store the operators used in the query to test if it defines the proper boundaries
     #Check to see if the operator is valid
@@ -197,6 +200,8 @@ def parseQuery3(raw_query):
             queryOperators[:] = []
             #print fieldname
             #print values
+            raw_query = translator.expandQuery(raw_query)
+            print(raw_query)
     elif "p:" in raw_query:
         search_type = 'phrase'
     else :
