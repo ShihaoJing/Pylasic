@@ -43,8 +43,9 @@ def parseQuery(query):
                 elif len(argfields) == 2:
                     #range search
                     #check to see that there are two values for the range search
-                    if len(args) != 2:
-                        printError("A range query should have 2 arguments to set the bounds")
+                    if len(args) > 2:
+                        print(len(args))
+                        printError("A range query should have no more than 2 arguments to set the bounds")
                     checkProperRange(argfields)
                     range_count = range_count + 1 #this is not the case. Test to see if the name is the argument is valid
                     #TODO: Check to see if the arguments are valid
@@ -73,8 +74,8 @@ def parseQuery(query):
                 bool_count = bool_count + 1
             elif len(argfields) == 2:
                 #check to see that there are two values for the range search
-                if len(args) != 2:
-                    printError("A range query should have 2 arguments to set the bounds")
+                if len(args) > 2:
+                    printError("A range query should have no more than 2 arguments to set the bounds")
                 #Check to see if the operator is valid
                 checkProperRange(argfields)
                 range_count = range_count + 1
@@ -114,6 +115,8 @@ def checkProperRange(argfields):
     keywords = ["lte","gte","lt","gt"]
     valid = False
     #print(argfields[0])   
+    #clear the queryOperators list
+    queryOperators[:] = []
     for op in keywords:
         if op == argfields[0]:
             valid = True
@@ -128,8 +131,10 @@ def checkProperRange(argfields):
 
 def checkProperOps():
     if len(queryOperators) != 0:
-        if len(queryOperators) != 2: #shouldn't need this, but just to double check
-            printError("A range query should have 2 arguments to set the bounds") 
+        if len(queryOperators) > 2: #shouldn't need this, but just to double check
+            printError("A range query should have no more than 2 arguments to set the bounds") 
+        if len(queryOperators) == 1: #this does not need to be checked
+            return
         if queryOperators[0] == queryOperators[1]:
             printError("Cannot define the same bound twice")
         if queryOperators[0] == "lt" or queryOperators[0] == "lte":
@@ -142,7 +147,7 @@ def checkProperOps():
 
 # results = searcher.execute_pylastic_search("data/STNAM/ARIZONA", type = 'bool')
 results = []
-query = "@SAT_AVG#[gte:1000, lte:1200] @City#[New York]"
+query = "@City#[New York]"
 
 query = query.strip(" ")
 if(query[0] == '@'):
