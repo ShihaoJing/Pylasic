@@ -10,30 +10,56 @@ def extractFieldnames(query):
 	#print(fieldnames)
 	return fieldnames
 
+def expandQuery(query):
+	fieldnames = extractFieldnames(query)
+	potential_fields = []
+	#print dictionary["VARIABLE NAME"].head()
+	friendlyNames = dictionary["developer-friendly name"]
+	variableNames = dictionary["VARIABLE NAME"]
+	for field in fieldnames:
+		j = 0
+		for i, row in dictionary.iterrows():
+			#print(i)
+			#print friendlyNames[i]
+			if field[0] in str(friendlyNames[i]):
+				if not variableNames[i] in potential_fields:
+					j = j + 1
+					potential_fields.append([variableNames[i],field[1]])
+				if j==5: #adding a limit
+					break
+				#print(potential_fields)
+	#print(potential_fields)
+	for field in potential_fields:
+		query += "@%s#%s"%(field[0],field[1])
+
+	return query
+
+
 #read in the dictionary
 dictionary = pd.read_csv("../dict/CollegeScorecardDataDictionary.csv")
+#print(dictionary.head())
 #print dictionary["developer-friendly name"].head()
 #print dictionary
-query = "@average#[gte:1000] @sat#[lte:1200]"
-fieldnames = extractFieldnames(query)
-potential_fields = []
+#query = "@average#[gte:1000] @sat#[lte:1200]"
+#fieldnames = extractFieldnames(query)
+#potential_fields = []
 #print dictionary["VARIABLE NAME"].head()
-friendlyNames = dictionary["developer-friendly name"]
-variableNames = dictionary["VARIABLE NAME"]
-for field in fieldnames:
-	j = 0
-	for i, row in dictionary.iterrows():
-		#print(i)
-		#print friendlyNames[i]
-		if field[0] in str(friendlyNames[i]):
-			if not variableNames[i] in potential_fields:
-				j = j + 1
-				potential_fields.append([variableNames[i],field[1]])
-			if j==5: #adding a limit
-				break
-			#print(potential_fields)
-#print(potential_fields)
-for field in potential_fields:
-	query += "@%s#%s"%(field[0],field[1])
+#friendlyNames = dictionary["developer-friendly name"]
+#variableNames = dictionary["VARIABLE NAME"]
+#for field in fieldnames:
+#	j = 0
+#	for i, row in dictionary.iterrows():
+#		#print(i)
+#		#print friendlyNames[i]
+#		if field[0] in str(friendlyNames[i]):
+#			if not variableNames[i] in potential_fields:
+#				j = j + 1
+#				potential_fields.append([variableNames[i],field[1]])
+#			if j==5: #adding a limit
+#				break
+#			#print(potential_fields)
+##print(potential_fields)
+#for field in potential_fields:
+#	query += "@%s#%s"%(field[0],field[1])
 
-print query
+#print query

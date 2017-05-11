@@ -1,17 +1,12 @@
-var fakeRes = [
-  {
-      'title': '1st dataset',
-      'text': "I'm the first data set"
-  },
-  {
-      'title': '2nd dataset',
-      'text': "I'm the second data set"
-  },
-  {
-      'title': '3rd dataset',
-      'text': "I'm the third data set"
-  }
-]
+function hideLoader() {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("content").style.display = "block";
+}
+
+function showloader() {
+  document.getElementById("content").style.display = "none";
+  document.getElementById("loader").style.display = "block";
+}
 
 new Vue({
   el: '#app',
@@ -22,10 +17,13 @@ new Vue({
   },
   methods: {
     submit: function () {
+      this.hasResult = true;
+      showloader();
       var query = {
         queryString: this.queryString
       }
       this.$http.get('/q', {params: query}).then(response => {
+        hideLoader();
         console.log(response.body)
         if (response.body.length == 0) {
           this.hasResult = false;

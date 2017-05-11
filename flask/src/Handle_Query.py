@@ -1,3 +1,6 @@
+import translateQuery as translator
+
+
 helpMessage = "The \'@\' symbol starts each field search, and is followed by the field you want to search in \nThe \'#\' symbol starts the list of values that you expect to find in the field\nIf you expect a numeric field, the the upper and lower bound of values must be specified.\n To specify the bounds, the following conditions can be used\n a) gte - greater than or equal to\n b) lte - less than or equal to\n c) gt - greater than\n d) lt - less than\nLastly, sperate successive terms inside the \'[..]\' by a comma"
 queryOperators = [] #this is the store the operators used in the query to test if it defines the proper boundaries
     #Check to see if the operator is valid
@@ -9,6 +12,7 @@ def parseQuery(query):
     #print(fields)
     bool_count = 0;
     range_count = 0;
+    print(fields)
     if len(fields) > 1:
         #type of search can either be multi_range or mixed
         for field in fields:
@@ -103,14 +107,14 @@ def checkProperRange(argfields):
     valid = False
     #print(argfields[0])   
     #clear the queryOperators list
-    queryOperators[:] = []
+    #queryOperators[:] = []
     for op in keywords:
-        if op == argfields[0]:
+        if op == argfields[0].strip(" "):
             valid = True
             queryOperators.append(op)
             break
     if not(valid):
-        printError("Unknown comparison operator")
+        printError("Unknown comparison operator '%s'"%(argfields[0].strip(" ")))
     #the second value should be a numeric value
     if not(argfields[1].isdigit()):
         printError("Range values must be numeric")
@@ -155,5 +159,58 @@ def parseQuery2(raw_query):
         preProcess_query = raw_query.replace("p:", "")
     
     return (preProcess_query,search_type)
-        
+
+def parseQuery3(raw_query):
+    '''
+    '''
+    search_type = None
+    preProcess_query = raw_query
+    #check if it is a boolean search, field search, or phrase search
+    if "@" in raw_query:
+        search_type = 'mixed'
+        #check the format of the query
+        fields = raw_query.split("@")
+        fields = fields[1:]
+        #print(fields)
+        for field in fields:
+            sections = field.split("#")
+            if len(sections) != 2:
+                printError("Syntax Error")
+            fieldname = sections[0]
+            values = sections[1].strip(" ")
+            #print(fieldname)
+            #print(values)
+            #check the brackets in values
+            if values[0] != '[' or values[len(values)-1] != ']':
+                printError("Missing brackets")
+            elif values.count(']') != 1:
+                printError("Syntax error: Too many ']' ")
+            values = values.replace("[", "").replace("]","")
+            values = values.split(",")
+            for value in values:
+                x = value.split(":")
+                if len(x) == 2:
+                    #check the range
+                    checkProperRange(x)
+                    checkProperOps()
+                elif len(x) == 1:
+                    continue
+                else:
+                    printError("Syntax error -- too many ':' ")
+            queryOperators[:] = []
+            #print fieldname
+            #print values
+            raw_query = translator.expandQuery(raw_query)
+            print(raw_query)
+    elif "p:" in raw_query:
+        search_type = 'phrase'
+    else :
+        search_type = 'bool'
+    
+    if search_type == 'mixed':
+        preProcess_query = raw_query.replace("@", "data/")
+    elif search_type == 'phrase':
+        preProcess_query = raw_query.replace("p:", "")
+    
+    return (preProcess_query,search_type)
         
