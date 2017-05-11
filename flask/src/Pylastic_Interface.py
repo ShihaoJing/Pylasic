@@ -16,9 +16,8 @@ import pyelasticsearch
 
 from elasticsearch_dsl import Search, Q
 from elasticsearch_dsl.connections import connections
-from bokeh.charts.builders.area_builder import Area
-from contextlib import nested
-from sympy.strategies.branch.core import condition
+
+
 
 
 connections.create_connection(hosts=['localhost:9200'], timeout=20)
@@ -146,7 +145,7 @@ def getURLlistFromDistribution(distributionInfo_listOfDict):
 def filter_results(result_list):
     '''
     @summary: remove duplicates, and return only the 
-    DatasetName, DatasetDescription, DatasetURL, Score, Keywords, and AttributeList
+    DatasetName, DatasetDescription, DatasetURL, Score, Keywords, and Attribute List
     '''
     filtered_results_set = set()    
     seen_results_set = set()
@@ -176,8 +175,8 @@ def filter_results(result_list):
         dict_form['datasetDescription'] = single_result[1]
         dict_form['datasetDistribution'] = single_result[2]
         dict_form['score'] = single_result[3]
-        dict_form['keywords'] = single_result[3]
-        dict_form['attrList'] = single_result[3]
+        dict_form['keywords'] = single_result[4]
+        dict_form['attrList'] = single_result[5]
         return_results_list.append(dict_form)
     return return_results_list    
     
