@@ -36,7 +36,7 @@ def expandQuery(query):
 
 
 #read in the dictionary
-dictionary = pd.read_csv("../dict/CollegeScorecardDataDictionary.csv")
+dictionary = pd.read_csv("CollegeScorecardDataDictionary.csv")
 #print(dictionary.head())
 #print dictionary["developer-friendly name"].head()
 #print dictionary
