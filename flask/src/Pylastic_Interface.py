@@ -145,7 +145,7 @@ def getURLlistFromDistribution(distributionInfo_listOfDict):
 def filter_results(result_list):
     '''
     @summary: remove duplicates, and return only the 
-    DatasetName, DatasetDescription, DatasetURL, Score, Keywords, and AttributeList
+    DatasetName, DatasetDescription, DatasetURL, Score, Keywords, and Attribute List
     '''
     filtered_results_set = set()    
     seen_results_set = set()
