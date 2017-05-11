@@ -4,6 +4,7 @@ from flask import request
 from flask import jsonify
 from elasticsearch import Elasticsearch
 from src import Pylastic_Interface as Searcher
+from src import Handle_Query
 
 
 es = Elasticsearch(timeout=300)
@@ -28,7 +29,8 @@ def index():
 @app.route('/q')
 def query():
 	queryString = request.args.get('queryString')
-	raw_results = Searcher.execute_pylastic_search(queryString, type = 'bool')
+	query_preprocessing = parseQuery(queryString)
+	raw_results = Searcher.execute_pylastic_search(query_preprocessing)
 	results = []
 	for single_result in raw_results:
 		dict_form = {}
