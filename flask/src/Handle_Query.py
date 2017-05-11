@@ -36,13 +36,13 @@ def parseQuery(query):
                     #check to see that there are two values for the range search
                     if len(args) > 2:
                         #print(len(args))
-                        printError("A range query should have no more than 2 arguments to set the bounds")
+                        return printError("A range query should have no more than 2 arguments to set the bounds")
                     checkProperRange(argfields)
                     range_count = range_count + 1 #this is not the case. Test to see if the name is the argument is valid
                     #TODO: Check to see if the arguments are valid
                 else:
                     #this is an error
-                     printError("This is improper syntax")
+                     return printError("This is improper syntax")
             #check the operators used in the query to make sure that the bounds of the range search are properly defined
             checkProperOps()
         if(bool_count != 0 and range_count != 0):
@@ -66,28 +66,28 @@ def parseQuery(query):
             elif len(argfields) == 2:
                 #check to see that there are two values for the range search
                 if len(args) > 2:
-                    printError("A range query should have no more than 2 arguments to set the bounds")
+                    return printError("A range query should have no more than 2 arguments to set the bounds")
                 #Check to see if the operator is valid
                 checkProperRange(argfields)
                 range_count = range_count + 1
             else:
-                printError("This is improper syntax")
+                return printError("This is improper syntax")
         #check the operators used in the query to make sure that the bounds of the range search are properly defined
         checkProperOps()
         #determine the search type
         if bool_count != 0 and range_count != 0:
-            printError("Field search cannot contain a range and a value")
+            return printError("Field search cannot contain a range and a value")
         elif bool_count != 0:
             searchType = 'bool'
         elif range_count != 0:
             searchType = 'single_range'
         else:
-            printError("It shouldn't have come to this")
+            return printError("It shouldn't have come to this")
     #print(bool_count)
     #print(range_count)
     print(searchType)
     if searchType == None:
-        printError("Could not determin the type of search")
+        return printError("Could not determin the type of search")
     result = []
     if searchType=='bool' or searchType=='single_range':
         result.append("data/%s"%(query))
@@ -100,7 +100,7 @@ def parseQuery(query):
 def printError(message):
     print("ERROR: %s\n"%(message))
     print(helpMessage)
-    quit()
+    return (message,'badFormat')
 
 def checkProperRange(argfields):
     keywords = ["lte","gte","lt","gt"]
@@ -114,26 +114,26 @@ def checkProperRange(argfields):
             queryOperators.append(op)
             break
     if not(valid):
-        printError("Unknown comparison operator '%s'"%(argfields[0].strip(" ")))
+        return printError("Unknown comparison operator '%s'"%(argfields[0].strip(" ")))
     #the second value should be a numeric value
     if not(argfields[1].isdigit()):
-        printError("Range values must be numeric")
+        return printError("Range values must be numeric")
 
 
 def checkProperOps():
     if len(queryOperators) != 0:
         if len(queryOperators) > 2: #shouldn't need this, but just to double check
-            printError("A range query should have no more than 2 arguments to set the bounds") 
+            return printError("A range query should have no more than 2 arguments to set the bounds") 
         if len(queryOperators) == 1: #this does not need to be checked
             return
         if queryOperators[0] == queryOperators[1]:
-            printError("Cannot define the same bound twice")
+            return printError("Cannot define the same bound twice")
         if queryOperators[0] == "lt" or queryOperators[0] == "lte":
             if queryOperators[1] != "gte" and queryOperators[1] != "gt":
-                printError("Bounds of the range search are not properly defined")
+                return printError("Bounds of the range search are not properly defined")
         elif queryOperators[0] == "gt" or queryOperators[0] == "gte":
             if queryOperators[1] != "lte" and queryOperators[1] != "lt":
-                printError("Bounds of the range search are not properly defined")
+                return printError("Bounds of the range search are not properly defined")
                 
                 
 #===============================================================
@@ -175,16 +175,16 @@ def parseQuery3(raw_query):
         for field in fields:
             sections = field.split("#")
             if len(sections) != 2:
-                printError("Syntax Error")
+                return printError("Syntax Error")
             fieldname = sections[0]
             values = sections[1].strip(" ")
             #print(fieldname)
             #print(values)
             #check the brackets in values
             if values[0] != '[' or values[len(values)-1] != ']':
-                printError("Missing brackets")
+                return printError("Missing brackets")
             elif values.count(']') != 1:
-                printError("Syntax error: Too many ']' ")
+                return printError("Syntax error: Too many ']' ")
             values = values.replace("[", "").replace("]","")
             values = values.split(",")
             for value in values:
@@ -196,7 +196,7 @@ def parseQuery3(raw_query):
                 elif len(x) == 1:
                     continue
                 else:
-                    printError("Syntax error -- too many ':' ")
+                    return printError("Syntax error -- too many ':' ")
             queryOperators[:] = []
             #print fieldname
             #print values
