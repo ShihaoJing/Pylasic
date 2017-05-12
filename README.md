@@ -9,7 +9,19 @@
 ```
 Download: https://www.elastic.co/downloads/elasticsearch
 Document: https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html
+
+4. Python support libraries
+
+conda install -c conda-forge elasticsearch=5.3.0
+or 
+pip install elasticsearch
+
+conda install pandas
+or 
+pip install pandas
+
 ```
+==================================================================================
 
 #### Setup server
 Default port 5000
@@ -20,11 +32,6 @@ cd pylastic/flask
 This script will bring up a server.
 Now in broswer: http://127.0.0.1:5000/
 
-==================================================================================
-
-conda install -c conda-forge elasticsearch=5.3.0
-or 
-pip install elasticsearch
 
 ===================================================================================
 

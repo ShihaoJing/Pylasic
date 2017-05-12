@@ -175,7 +175,7 @@ def parseQuery3(raw_query):
         for field in fields:
             sections = field.split("#")
             if len(sections) != 2:
-                return printError("Syntax Error")
+                return printError("Syntax Error, the field search is wrong, please refer to the format guide")
             fieldname = sections[0]
             values = sections[1].strip(" ")
             #print(fieldname)
