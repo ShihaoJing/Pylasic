@@ -21,7 +21,7 @@ def expandQuery(query):
 		for i, row in dictionary.iterrows():
 			#print(i)
 			#print friendlyNames[i]
-			if field[0] in str(friendlyNames[i]):
+			if field[0].lower() in str(friendlyNames[i]):
 				if not variableNames[i] in potential_fields:
 					j = j + 1
 					potential_fields.append([variableNames[i],field[1]])
