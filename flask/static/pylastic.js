@@ -13,11 +13,12 @@ new Vue({
   data: {
     queryString: '',
     hasResult: false,
-    resultList: []
+    hasError: false,
+    resultList: [],
+    errorMessage: ''
   },
   methods: {
     submit: function () {
-      this.hasResult = true;
       showloader();
       var query = {
         queryString: this.queryString
@@ -27,12 +28,22 @@ new Vue({
         console.log(response.body)
         if (response.body.length == 0) {
           this.hasResult = false;
+          this.hasError = false;
           this.resultList = []
         }
         else 
         {
-          this.hasResult = true;
           this.resultList = response.body
+          if ('Error' in this.resultList[0]) {
+            this.errorMessage = this.resultList[0]['Error']
+            this.hasError = true;
+            this.hasResult = true;
+          }
+          else
+          {
+            this.hasResult = true;
+            this.hasError = false;
+          }
         }
         //this.resultList = fakeRes;
       }, response => {

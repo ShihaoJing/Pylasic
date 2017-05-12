@@ -4,7 +4,7 @@ from flask import request
 from flask import jsonify
 from elasticsearch import Elasticsearch
 from src import Pylastic_Interface as Searcher
-from src import Handle_Query
+from src import Handle_Query as Handler
 
 
 es = Elasticsearch(timeout=300)
@@ -29,8 +29,12 @@ def index():
 @app.route('/q')
 def query():
 	queryString = request.args.get('queryString')
-	query_preprocessing = parseQuery(queryString)
-	raw_results = Searcher.execute_pylastic_search(query_preprocessing)
+	query_preprocessing = Handler.parseQuery3(queryString)
+	if query_preprocessing[1] == 'badFormat':
+		a = [{'Error':query_preprocessing[0]}]
+		return jsonify(a)
+
+	raw_results = Searcher.execute_pylastic_search(query_preprocessing[0], type = query_preprocessing[1])
 	results = []
 	for single_result in raw_results:
 		dict_form = {}

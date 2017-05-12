@@ -201,7 +201,7 @@
         <div id="content">
           <ul>
             <!-- Render a li element for every entry in the computed filteredArticles array. -->          
-            <li class="general" v-for="result in resultList" v-if="hasResult">
+            <li class="general" v-for="result in resultList" v-if="hasResult && !hasError">
               <p class="title">{{result.datasetName}}</p>
               <details>
                 <summary>Description</summary>
@@ -228,6 +228,21 @@
             <li v-if="!hasResult">
               <p class="title">Try search something...</p>
             </li>
+
+            <li v-if="hasError">
+              <p class="title">{{errorMessage}}</p>
+              <p class="description">
+              <b>@State#[new york] @population#[gte:10000 , lt:20000] <br></b>
+              The "@" symbol starts each field search, and is followed by the field you want to search in. <br>
+              The "#" symbol starts the list of values that you expect to find in the field. <br>
+              If you expect a numeric field, then the upper and lower bound of values must be specified. <br>
+              to specify the bounds, the following conditions can be used: <br>
+                a) gte - greater than or equal to <br>
+                b) lte - less than or equal to <br>
+                c) gt - greater than <br>
+                d) lt - less than <br>
+              </p>
+            </li>
           </ul>
         </div>
       </div> <!-- div6 -->
@@ -243,7 +258,7 @@
           <details>
             <summary>Range Search</summary>
             <p class="description">
-            <b>@State#[new york],@population#[gte:10000 , lt:20000] <br></b>
+            <b>@State#[new york] @population#[gte:10000 , lt:20000] <br></b>
             The "@" symbol starts each field search, and is followed by the field you want to search in. <br>
             The "#" symbol starts the list of values that you expect to find in the field. <br>
             If you expect a numeric field, then the upper and lower bound of values must be specified. <br>
