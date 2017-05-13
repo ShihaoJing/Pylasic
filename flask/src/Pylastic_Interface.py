@@ -394,7 +394,7 @@ def execute_pylastic_mixed_search(input_string):
                 #check if this is a nested search, i.e. the path has "/"
                 if len(path_parts) > 1:
                     path_to_search = ".".join(path_parts[:-1])                                                                            
-                q =Q('match', **{area_to_search : single_term})    
+                q =Q('match_phrase', **{area_to_search : single_term})    
                 query_list.append(q)            
     #---END FOR LOOP
     nested_query = Q('bool',should = query_list)
